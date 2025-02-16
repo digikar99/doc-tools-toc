@@ -262,6 +262,12 @@ URL`http://handyoutlinerfo.sourceforge.net/'."
 String (i.e. surround with double quotes)."
   :type 'file)
 
+(defcustom doc-toc-default-doc-extension nil
+  "Extension of the default filename created by `doc-toc--add-to-doc'
+when the outline buffer is not created by `doc-toc-extract-outline' or equivalent.
+Useful for directly working with toc buffer/files without using emacs for pdf viewing."
+  :type 'string)
+
 (defcustom doc-toc-outline-extension ".txt"
   "Extension of the buffer/filename created by `doc-toc-extract-outline'."
   :type 'string)
@@ -1026,7 +1032,17 @@ This command uses the shell program `djvused'."
 The text of the current buffer is passed as source input to either the
 `pdfoutline' or `djvused' shell command."
   (interactive)
-  (let ((ext (url-file-extension (buffer-file-name doc-buffer))))
+  (let ((ext (cond ((boundp 'doc-buffer)
+                    (url-file-extension (buffer-file-name doc-buffer)))
+                   (doc-toc-default-doc-extension
+                    doc-toc-default-doc-extension)
+                   (t
+                    (error "ERROR:
+1. I do not know the value of `doc-buffer' perhaps because this function is being
+   called outside the context created by `doc-toc-extract-outline' or equivalent.
+2. `doc-toc-default-doc-extension' is also unset.
+   Set it to either \".pdf\" or \".djvu\" so I can work outside the contexts
+   created by `doc-toc-extract-outline' or equivalents.")))))
     (cond ((string= ".pdf" ext) (doc-toc--add-to-pdf))
           ((string= ".djvu" ext) (doc-toc--add-to-djvu)))))
 
