@@ -262,6 +262,10 @@ URL`http://handyoutlinerfo.sourceforge.net/'."
 String (i.e. surround with double quotes)."
   :type 'file)
 
+(defcustom doc-toc-outline-extension ".txt"
+  "Extension of the buffer/filename created by `doc-toc-extract-outline'."
+  :type 'string)
+
 ;;;; pdf.tocgen
 ;;;###autoload
 (defun doc-toc-gen-set-level (level)
@@ -595,7 +599,7 @@ unprocessed text."
          (text (shell-command-to-string
                 (format shell-command
                         (shell-quote-argument buffer-file-name))))
-         (buffer (get-buffer-create (concat (file-name-sans-extension (buffer-name)) ".txt"))))
+         (buffer (get-buffer-create (concat (file-name-sans-extension (buffer-name)) doc-toc-outline-extension))))
     (switch-to-buffer buffer)
     (setq-local doc-buffer source-buffer)
     (insert text)))
